@@ -94,18 +94,23 @@ def get_pie_chart(entered_site):
 
 # function to evaluate scatter plot
 def get_scatter_chart(entered_site, entered_payload):
-    if entered_site == "All Sites":
-        new_df = spacex_df 
-        new_df2 = new_df[new_df["Payload Mass (kg)"]>=entered_payload[0]] 
-        new_df3 = new_df[new_df["Payload Mass (kg)"]<=entered_payload[1]] 
-        fig2 = px.scatter(new_df3, y="class", x="Payload Mass (kg)", color="Booster Version Category")
+    df = spacex_df
+    low, high = entered_payload
+
+    if entered_site == 'ALL':
+        fig2 = px.scatter(df, x='Payload Mass (kg)', y='class', color='Booster Version Category')
+        return fig2
+
+        #sns.scatterplot(data=df, x='Payload Mass (kg)', y='class', hue= 'Booster Version Category', legend='auto')
+
     else:
-        new_df = spacex_df[spacex_df["Lauch Site"]==entered_site]
-        new_df2 = new_df[new_df["Payload Mass (kg)"]>=entered_payload[0]]
-        new_df3 = new_df[new_df["Payload Mass (kg)"]<=entered_payload[1]]
-        fig2 = px.scatter(new_df3, y="class", x="Payload Mass (kg)", color="Booster Version Category")
-       
-    return fig2
+        #select data
+        mask = (df['Payload Mass (kg)'] > low) & (df['Payload Mass (kg)'] < high) & (df['Launch Site']== entered_site)
+
+        fig2 = px.scatter(df[mask], 
+            x='Payload Mass (kg)', y='class', color= 'Booster Version Category')
+        return fig2
+        #sns.scatterplot(data=df[df['Launch Site']=='CCAFS LC-40'], x='Payload Mass (kg)', y='class', hue= 'Booster Version Category', legend='auto')
 
 # Run the app
 if __name__ == '__main__':
